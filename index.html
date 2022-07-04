@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.8.40/Tone.js"></script>
+    <script crossorigin src="https://unpkg.com/react@17/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@17/umd/react-dom.development.js"></script>
+    </script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        .white{
+            border:1px solid black;
+            background-color:white;
+            width:23px;
+            height:200px;
+            color:black;
+            position :flex;
+        }
+        .black{
+            border:1px solid white;
+            background-color:black;
+            width:23px;
+            color:white;
+            height:200px;
+            top:0;
+            
+        }
+        .white:hover{
+            background-color:chartreuse;
+            color:black;
+        }
+        .black:hover{
+            background-color:chartreuse;
+            color:black;
+        }
+        *{margin:0;padding:0;font-size:xx-small;}
+        #root,body,html{width:100%;height:100%;overflow:hidden;}
+    </style>
+</head>
+
+<body>
+    <script type="text/babel">
+        const synth = new Tone.Synth().toDestination();
+        var container = [];
+        function c(key) { 
+            function handleClick(e) {
+                e.preventDefault();
+                synth.triggerAttackRelease(e.target.value, '32n');
+            }
+            if ( key.length >2){
+                return( 
+                    <input type="button" className={'black'} key={key} value={key} onClick={handleClick}></input>
+                )
+
+            }else {
+                return( 
+                    <input type="button" className={'white'} key={key} value={key} onClick={handleClick}></input>
+                )
+            }
+        }
+        var numbers =  [2,3,4,5,6,7];
+        var code = ['C','Db','D','Eb','E','F','Gb','G','Ab','A','Bb','B'];
+        var list = [];
+        for ( var i=0; i<numbers.length;i++){
+            for ( var j=0; j<code.length;j++){
+                list.push(code[j]+numbers[i]);
+            }
+        }
+        
+        list.map((key)=>{ container.push(c(key)) });
+        ReactDOM.render(
+            <div>
+                {container}
+            </div>, 
+        document.getElementById('root'))
+    </script>
+    <div id="root"></div>
+    
+</body>
+
+</html>
