@@ -68,40 +68,69 @@
 <body>
     <div id="root"></div>
     <script type="text/babel">
-        const synth = new Tone.Synth().toDestination();
-        var now = Tone.now();
-        var container = [];
-        function c(key) {
-            function attack(e) {
-                synth.triggerAttack(e.target.value, now);
+        var synth = null;
+        var now = null;
+        function getKeyList() {
+            var list = [];
+            var codeList = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
+            for (var i = 2; i <= 7; i++) {
+                for (var j = 0; j < codeList.length; j++) {
+                    list.push(codeList[j] + i);
+                }
             }
-            function release(e) {
-                synth.triggerRelease(e.target.value, now);
-            }
-            if (key.length > 2) {
-                return (
-                    <button className={'black key'} key={key} value={key} onTouchStart={attack} onTouchEnd={release} onContextMenu={(e) => e.preventDefault()}></button>
-                )
+            list.push('C8');
+            return list;
 
-            } else {
+        }
+        class Piano extends React.Component {
+            constructor(props) {
+                super(props);
+                this.state = {
+                    power: false
+                }
+                this.toggle = this.toggle.bind(this);
+                this.attack = this.attack.bind(this);
+                this.release = this.release.bind(this);
+            }
+            attack(obj) {
+                synth.triggerAttack(obj.target.id, now);
+                console.log(obj.target.id);
+            }
+            release(obj) {
+                synth.triggerRelease(obj.target.id, now);
+                console.log(obj.target.id);
+            }
+            toggle() {
+                if (synth == null) {
+                    synth = new Tone.PolySynth().toDestination();
+                    now = Tone.now();
+                } else {
+                    synth = null;
+                }
+                this.setState(prevState => ({
+                    power: !prevState.power
+                }));
+            }
+            render() {
                 return (
-                    <button className={'white key'} key={key} value={key} onTouchStart={attack} onTouchEnd={release} onContextMenu={(e) => e.preventDefault()}></button>
+                    <div className="piano">
+                        <div>
+                            <button onClick={this.toggle}>{this.state.power ? 'ON' : 'OFF'}</button>
+                        </div>
+                        {getKeyList().map((key) => <button className={'key ' + (key.length > 2 ? 'black' : 'white')} onContextMenu={(e) => e.preventDefault()} key={key} id={key}
+
+                            onTouchStart={this.attack}
+                            onTouchEnd={this.release}
+
+
+                            on></button>)}
+                    </div>
                 )
             }
-        }
-        var numbers = [2, 3, 4, 5, 6, 7];
-        var code = ['C', 'Db', 'D', 'Eb', 'E', 'F', 'Gb', 'G', 'Ab', 'A', 'Bb', 'B'];
-        var list = [];
-        for (var i = 0; i < numbers.length; i++) {
-            for (var j = 0; j < code.length; j++) {
-                list.push(code[j] + numbers[i]);
-            }
-        }
-
-        list.map((key) => { container.push(c(key)) });
+        };
         ReactDOM.render(
             <div>
-                {container}
+                <Piano/>
             </div>,
             document.getElementById('root'))
     </script>
