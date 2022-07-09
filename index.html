@@ -69,20 +69,23 @@
     <div id="root"></div>
     <script type="text/babel">
         const synth = new Tone.Synth().toDestination();
+        var now = Tone.now();
         var container = [];
         function c(key) {
-            function handleClick(e) {
-                e.preventDefault();
-                synth.triggerAttackRelease(e.target.value, '32n');
+            function attack(e) {
+                synth.triggerAttack(e.target.value, now);
+            }
+            function release(e) {
+                synth.triggerRelease(e.target.value, now);
             }
             if (key.length > 2) {
                 return (
-                    <button className={'black key'} key={key} value={key} onClick={handleClick} onTouchStart={handleClick}></button>
+                    <button className={'black key'} key={key} value={key} onTouchStart={attack} onTouchEnd={release} onContextMenu={(e) => e.preventDefault()}></button>
                 )
 
             } else {
                 return (
-                    <button className={'white key'} key={key} value={key} onClick={handleClick} onTouchStart={handleClick}></button>
+                    <button className={'white key'} key={key} value={key} onTouchStart={attack} onTouchEnd={release} onContextMenu={(e) => e.preventDefault()}></button>
                 )
             }
         }
